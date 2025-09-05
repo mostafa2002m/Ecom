@@ -1,9 +1,6 @@
 ﻿using Application.Interfaces;
-using Domain.Entities;
 using Infrastructure.Data;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace Infrastructure.Repositories
@@ -40,34 +37,34 @@ namespace Infrastructure.Repositories
 
 
 
-        public async Task<IEnumerable<T>> GetAllAsync(string[] includes = null,
-                                            Expression<Func<T, bool>> expression = null,
-                                            IOrderedEnumerable<T> orderBy = null)
-        {
-            IQueryable<T> query = _entities;
+        //public async Task<IEnumerable<T>> GetAllAsync(string[] includes = null,
+        //                                    Expression<Func<T, bool>> expression = null,
+        //                                    IOrderedEnumerable<T> orderBy = null)
+        //{
+        //    IQueryable<T> query = _entities;
 
-            if (expression != null)
-                query = query.Where(expression);
+        //    if (expression != null)
+        //        query = query.Where(expression);
 
-            if (includes != null)
-                foreach (var incluse in includes)
-                    query = query.Include(incluse);
-            if (orderBy != null)
-                query = orderBy.AsQueryable();
-            return await query.AsNoTracking().ToListAsync();
-        }
+        //    if (includes != null)
+        //        foreach (var incluse in includes)
+        //            query = query.Include(incluse);
+        //    if (orderBy != null)
+        //        query = orderBy.AsQueryable();
+        //    return await query.AsNoTracking().ToListAsync();
+        //}
 
-        public async Task<T> GetAsync(Expression<Func<T, bool>> expression, string[] includes = null!)
-        {
-            IQueryable<T> query = _entities;
-            if (includes != null)
-                foreach (var incluse in includes)
-                    query = query.Include(incluse);
+        //public async Task<T> GetAsync(Expression<Func<T, bool>> expression, string[] includes = null!)
+        //{
+        //    IQueryable<T> query = _entities;
+        //    if (includes != null)
+        //        foreach (var incluse in includes)
+        //            query = query.Include(incluse);
 
-            return await query.FirstOrDefaultAsync(expression);
-        }
+        //    return await query.FirstOrDefaultAsync(expression);
+        //}
 
-        public  Task UpdateAsync(T entity)
+        public Task UpdateAsync(T entity)
         {
             _entities.Attach(entity);
             _entities.Entry(entity).State = EntityState.Modified;
@@ -77,24 +74,20 @@ namespace Infrastructure.Repositories
 
         private int SaveChangesAsync() => context.SaveChanges();
 
-        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, object>>[] includes = null,
-                                                Expression<Func<T, bool>> expression = null!,
-                                                IOrderedEnumerable<T> orderBy = null)
+        public async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, object>>[] includes)
         {
             IQueryable<T> query = _entities;
 
-            if (expression != null)
-                query = query.Where(expression);
+            
 
             if (includes != null)
                 foreach (var incluse in includes)
                     query = query.Include(incluse);
-            if (orderBy != null)
-                query = orderBy.AsQueryable();
+            
             return await query.AsNoTracking().ToListAsync();
         }
 
-        public async Task<T> GetAsync(Expression<Func<T, bool>> expression,  Expression<Func<T, object>>[] includes = null)
+        public async Task<T> GetAsync(Expression<Func<T, bool>> expression,params Expression<Func<T, object>>[] includes)
         {
             IQueryable<T> query = _entities;
             if (includes != null)
@@ -104,6 +97,6 @@ namespace Infrastructure.Repositories
             return await query.FirstOrDefaultAsync(expression);
         }
 
-        
+
     }
 }

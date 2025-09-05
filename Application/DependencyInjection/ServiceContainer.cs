@@ -1,10 +1,9 @@
-﻿using Application.Configuration;
-using Application.Identity;
+﻿using Application.Identity;
 using Application.Interfaces.Authentication;
+using Application.Mapping;
 using Application.Services.Authentication;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 

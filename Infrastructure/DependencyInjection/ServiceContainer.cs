@@ -1,16 +1,16 @@
-﻿using Application.Interfaces;
+﻿using Application.Helper;
+using Application.Interfaces;
+using Application.Mapping;
 using Infrastructure.Data;
-using Application.Helper;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Application.Interfaces.Authentication;
-using Infrastructure.Repositories.Authentication;
 
 namespace Infrastructure.DependencyInjection
 {
@@ -78,7 +78,7 @@ namespace Infrastructure.DependencyInjection
             services.AddAuthorizationCore();
 
 
-
+            services.AddAutoMapper(cfg => { }, typeof(MapperInitializer).Assembly);
 
             services.AddCors(option =>
             {
@@ -93,7 +93,7 @@ namespace Infrastructure.DependencyInjection
                     });
             });
 
-
+           
             services.AddControllers().AddNewtonsoftJson(x =>
                 x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
@@ -101,6 +101,9 @@ namespace Infrastructure.DependencyInjection
 
             //apply UnitOf Work
             services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
+            services.AddSingleton<IImageManagementService, ImageManagementService>();
+            services.AddSingleton<IFileProvider>(new PhysicalFileProvider(
+                Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
 
             return services;
         }
