@@ -4,7 +4,7 @@ namespace Application.Interfaces
 {
     public interface IImageManagementService
     {
-        Task<List<string>> UploadImageAsync(IFormFileCollection files, string folderName);
-        void DeleteImageAsync(string publicId);
+        Task<List<string>> AddImageAsync(IFormFileCollection files, string src);
+        void DeleteImageAsync(string src);
     }
 }

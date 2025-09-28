@@ -9,16 +9,14 @@ namespace WebApi.Controllers
 {
 
 
-    public class ProductController(IUnitOfWork context,
-         IMapper mapper)
-        : BaseController(context, mapper)
+    public class ProductController(IUnitOfWork context, IMapper mapper): BaseController(context, mapper)
     {
         [HttpGet("all")]
         public async Task<IActionResult> GetAllAsync()
         { 
             try
             {
-                var response = await context.ProductRepo.GetAllAsync(x => x.Category, x => x.Photos);
+                var response = await context.GetRepository<Product>().GetAllAsync(x => x.Category, x => x.Photos);
                 if (response is null || !response.Any())
                 {
                     return BadRequest(error: new ResponseApi(400, "No Data Found"));
@@ -40,7 +38,7 @@ namespace WebApi.Controllers
 
             try
             {
-                var response = await context.ProductRepo.GetAsync(_ => _.Id == id, x=> x.Category, x => x.Photos);
+                var response = await context.GetRepository<Product>().GetAsync(_ => _.Id == id, x=> x.Category, x => x.Photos);
 
                 if (response is null)
                 {
@@ -57,9 +55,9 @@ namespace WebApi.Controllers
             }
         }
 
-        [HttpPost("add")]
+        [HttpPost("add"),DisableRequestSizeLimit]
 
-        public async Task<IActionResult> Add(ProductDto model)
+        public async Task<IActionResult> Add(List<IFormFile> x, CreateProductDto model)
         {
             if (!ModelState.IsValid)
             {
@@ -68,7 +66,7 @@ namespace WebApi.Controllers
             }
             try
             {
-                var existData = await context.ProductRepo.GetAsync(_=>_.Name.Equals(model.Name, StringComparison.CurrentCultureIgnoreCase));
+                Product existData = await context.GetRepository<Product>().GetAsync(_ => _.Name.Equals(model.Name));
                 if (existData is not null)
                 {
                     
@@ -77,6 +75,7 @@ namespace WebApi.Controllers
 
                 await context.BeginTransactionAsync();
 
+                
                 await context.ProductRepo.AddAsync(model);
                 await context.CommitAsync();
 
@@ -101,25 +100,19 @@ namespace WebApi.Controllers
             }
             try
             {
-                var existData = await context.ProductRepo.GetAsync(_=>_.Id == id && _.Name.Equals(model.Name, StringComparison.CurrentCultureIgnoreCase));
+                var existData = await context.GetRepository<Product>().GetAsync(_=>_.Id != id && _.Name.Equals(model.Name));
                 if (existData is not null)
                 {
                     
                     return BadRequest(error: new ResponseApi(400,  "Already Exist"));
                 }
 
-                var isExist = await context.ProductRepo.GetAsync(_ => _.Id == id);
-                if (isExist is not null)
-                {
-                    var result = mapper.Map(model, isExist);
-                    await context.ProductRepo.UpdateAsync(result);
+                
+                    await context.ProductRepo.UpdateAsync(model);
                     await context.SaveChangesAsync();
                     return Ok(new ResponseApi(200, "Updated"));
-                }
-                else
-                {
-                    return BadRequest(error: new ResponseApi(400, "Product not found"));
-                }
+
+               
             }
             catch (Exception ex)
             {
@@ -139,13 +132,13 @@ namespace WebApi.Controllers
 
             try
             {
-                var deletedData = await context.ProductRepo.GetAsync(_ => _.Id == id);
+                var deletedData = await context.GetRepository<Product>().GetAsync(_ => _.Id == id);
                 if (deletedData == null)
                 {
                     
                     return BadRequest(error: new ResponseApi(400, "Deleted Data Is Invalid"));
                 }
-                await context.ProductRepo.DeleteAsync(id);
+                await context.GetRepository<Product>().DeleteAsync(id);
                 await context.SaveChangesAsync();
                 return Ok(new ResponseApi(200, "Deleted"));
 

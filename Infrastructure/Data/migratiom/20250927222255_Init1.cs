@@ -4,7 +4,7 @@
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace Infrastructure.Data.Migrations
+namespace Infrastructure.data.migratiom
 {
     /// <inheritdoc />
     public partial class Init1 : Migration
@@ -32,7 +32,7 @@ namespace Infrastructure.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NewPrice = table.Column<decimal>(type: "Decimal(18,0)", nullable: false),
                     OldPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -84,10 +84,15 @@ namespace Infrastructure.Data.Migrations
                 columns: new[] { "Id", "CategoryId", "Description", "Name", "NewPrice", "OldPrice" },
                 values: new object[,]
                 {
-                    { 1, 1, "IPhone 13 with 128GB", "IPhone 13", 999.99m, 1099.99m },
-                    { 2, 1, "Samsung Galaxy S21 with 128GB", "Samsung Galaxy S21", 899.99m, 999.99m },
-                    { 3, 2, "Dell XPS 13 Laptop with Intel i7", "Dell XPS 13", 1199.99m, 1299.99m }
+                    { 1, 1, "IPhone 13 with 128GB", "IPhone 13", 999.99m, 0m },
+                    { 2, 1, "Samsung Galaxy S21 with 128GB", "Samsung Galaxy S21", 899.99m, 0m },
+                    { 3, 2, "Dell XPS 13 Laptop with Intel i7", "Dell XPS 13", 1199.99m, 0m }
                 });
+
+            migrationBuilder.InsertData(
+                table: "Photos",
+                columns: new[] { "Id", "ImageName", "ProductId" },
+                values: new object[] { 1, "default.png", 1 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Photos_ProductId",

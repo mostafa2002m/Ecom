@@ -23,7 +23,7 @@ namespace Infrastructure.Repositories
         private IDbContextTransaction _transaction;
         private readonly Dictionary<Type, object> repositories;
         //private IUserepo _users = null;
-        public UnitOfWork(AppDbContext context , IMapper mapper , IImageManagementService imageManagementService)
+        public UnitOfWork(AppDbContext context, IMapper mapper, IImageManagementService imageManagementService)
         {
             this.mapper = mapper;
             this.imageManagementService = imageManagementService;

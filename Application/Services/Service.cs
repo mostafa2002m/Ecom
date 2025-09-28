@@ -26,7 +26,7 @@ namespace Application.Services
                 {
                     if (response.StatusCode == HttpStatusCode.NoContent)
                     {
-                        return default(T);
+                        return default;
                     }
 
                     return await response.Content.ReadFromJsonAsync<T>();
@@ -88,7 +88,7 @@ namespace Application.Services
                 {
                     if (response.StatusCode == HttpStatusCode.NotFound)
                     {
-                        return default(List<T>);
+                        return default;
                     }
 
                     return await response.Content.ReadFromJsonAsync<List<T>>();
@@ -122,7 +122,7 @@ namespace Application.Services
                 {
                     if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                     {
-                        return default(T);
+                        return default;
                     }
 
                     return await response.Content.ReadFromJsonAsync<T>();
@@ -153,7 +153,7 @@ namespace Application.Services
                 {
                     if (response.StatusCode == HttpStatusCode.NoContent)
                     {
-                        return default(T);
+                        return default;
                     }
 
                     return await response.Content.ReadFromJsonAsync<T>();

@@ -3,19 +3,16 @@ using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Infrastructure.Data.Migrations
+namespace Infrastructure.data.migratiom
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250905210839_Init1")]
-    partial class Init1
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,6 +82,14 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("Photos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ImageName = "default.png",
+                            ProductId = 1
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Product", b =>
@@ -104,8 +109,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("nvarchar(30)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("NewPrice")
                         .HasColumnType("Decimal(18.2)");
@@ -127,7 +131,7 @@ namespace Infrastructure.Data.Migrations
                             Description = "IPhone 13 with 128GB",
                             Name = "IPhone 13",
                             NewPrice = 999.99m,
-                            OldPrice = 1099.99m
+                            OldPrice = 0m
                         },
                         new
                         {
@@ -136,7 +140,7 @@ namespace Infrastructure.Data.Migrations
                             Description = "Samsung Galaxy S21 with 128GB",
                             Name = "Samsung Galaxy S21",
                             NewPrice = 899.99m,
-                            OldPrice = 999.99m
+                            OldPrice = 0m
                         },
                         new
                         {
@@ -145,7 +149,7 @@ namespace Infrastructure.Data.Migrations
                             Description = "Dell XPS 13 Laptop with Intel i7",
                             Name = "Dell XPS 13",
                             NewPrice = 1199.99m,
-                            OldPrice = 1299.99m
+                            OldPrice = 0m
                         });
                 });
 
@@ -163,12 +167,17 @@ namespace Infrastructure.Data.Migrations
             modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
                     b.HasOne("Domain.Entities.Category", "Category")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Category", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Domain.Entities.Product", b =>

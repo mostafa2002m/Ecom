@@ -8,8 +8,7 @@ namespace WebApi.Controllers
 {
 
 
-    public class CategoryController(IUnitOfWork context, IMapper mapper)
-        : BaseController(context, mapper)
+    public class CategoryController(IUnitOfWork context, IMapper mapper) : BaseController(context, mapper)
     {
         [HttpGet("all")]
         public async Task<IActionResult> GetAllAsync()
@@ -63,7 +62,7 @@ namespace WebApi.Controllers
             }
             try
             {
-                var existData = await context.CategoryRepo.GetAsync(_=>_.Name.Equals(model.Name, StringComparison.CurrentCultureIgnoreCase));
+                var existData = await context.CategoryRepo.GetAsync(_=>_.Name.Equals(model.Name));
                 if (existData is not null)
                 {
                     return BadRequest(error: new ResponseApi(400, "Already Exist"));
@@ -97,7 +96,7 @@ namespace WebApi.Controllers
             }
             try
             {
-                var existData = await context.CategoryRepo.GetAsync(_=>_.Id == id && _.Name.Equals(model.Name, StringComparison.CurrentCultureIgnoreCase));
+                var existData = await context.CategoryRepo.GetAsync(_=>_.Id != id && _.Name.Equals(model.Name));
                 if (existData is not null)
                 {
                     return BadRequest(error: new ResponseApi(400,  "Already Exist"));
@@ -106,14 +105,14 @@ namespace WebApi.Controllers
                 var isExist = await context.CategoryRepo.GetAsync(_ => _.Id == id);
                 if (isExist is not null)
                 {
-                    var result = mapper.Map(model, isExist);
+                    var result = mapper.Map<Category>(model);
                     await context.CategoryRepo.UpdateAsync(result);
                     await context.SaveChangesAsync();
                     return Ok(new ResponseApi(200, "Updated"));
                 }
                 else
                 {
-                    return BadRequest(error: new ResponseApi(400, "Category not found"));
+                    return BadRequest(error: new ResponseApi(400, "Item not found"));
                 }
             }
             catch (Exception ex)

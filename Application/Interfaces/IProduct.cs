@@ -5,6 +5,7 @@ namespace Application.Interfaces
 {
     public interface IProduct :IRepository<Product>
     {
-        Task<bool> AddAsync(ProductDto productDto);
+        Task<bool> AddAsync(CreateProductDto productDto);
+        Task<bool> UpdateAsync(UpdateProductDto productDto);
     }
 }

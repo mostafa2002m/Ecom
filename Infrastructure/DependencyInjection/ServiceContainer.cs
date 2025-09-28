@@ -5,6 +5,7 @@ using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,7 +32,10 @@ namespace Infrastructure.DependencyInjection
             });
 
 
-
+            services.Configure<FormOptions>(options =>
+            {
+                options.ValueCountLimit = int.MaxValue;
+            });
 
             // Add identity & Jwt authentication
 
@@ -77,7 +81,6 @@ namespace Infrastructure.DependencyInjection
 
             services.AddAuthorizationCore();
 
-
             services.AddAutoMapper(cfg => { }, typeof(MapperInitializer).Assembly);
 
             services.AddCors(option =>
@@ -100,7 +103,7 @@ namespace Infrastructure.DependencyInjection
             //services.AddScoped<IUserRepo, UserRepo>();
 
             //apply UnitOf Work
-            services.AddScoped(typeof(IUnitOfWork), typeof(UnitOfWork));
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<IImageManagementService, ImageManagementService>();
             services.AddSingleton<IFileProvider>(new PhysicalFileProvider(
                 Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")));
