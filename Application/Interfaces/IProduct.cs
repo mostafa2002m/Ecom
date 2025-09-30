@@ -7,5 +7,7 @@ namespace Application.Interfaces
     {
         Task<bool> AddAsync(CreateProductDto productDto);
         Task<bool> UpdateAsync(UpdateProductDto productDto);
+        //Task GetAsync(int id);
+        Task DeleteAsync(Product product);
     }
 }

@@ -15,6 +15,7 @@ namespace Infrastructure.Repositories
         public async Task<List<string>> AddImageAsync(IFormFileCollection files, string src)
         {
             var SaveImageSrc = new List<string>();
+
             var contentPath = webHostEnvironment.WebRootPath;
             string path = Path.Combine(contentPath, ImageFolder, src);
 
@@ -38,8 +39,8 @@ namespace Infrastructure.Repositories
                 if (item.Length > 0)
                 {
                     var uniqueFileName = $"{Guid.NewGuid()}{ext}";
-                    var imageName = uniqueFileName + ext;
-                    var imageSrc = $"Images/{src}/{imageName}";
+                    var imageName = uniqueFileName;
+                    var imageSrc = $"{ImageFolder}/{src}/{imageName}";
                     var root = Path.Combine(path, imageName);
                     using (FileStream stream = new FileStream(root, FileMode.Create))
                     {
@@ -54,7 +55,7 @@ namespace Infrastructure.Repositories
         {
             var info = fileProvider.GetFileInfo(src);
             var root = info.PhysicalPath;
-            File.Delete(root);
+            System.IO.File.Delete(root);
         }
 
        

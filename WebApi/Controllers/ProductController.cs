@@ -57,7 +57,7 @@ namespace WebApi.Controllers
 
         [HttpPost("add"),DisableRequestSizeLimit]
 
-        public async Task<IActionResult> Add(List<IFormFile> x, CreateProductDto model)
+        public async Task<IActionResult> Add(List<IFormFile>? photo, CreateProductDto productDto)
         {
             if (!ModelState.IsValid)
             {
@@ -66,7 +66,7 @@ namespace WebApi.Controllers
             }
             try
             {
-                Product existData = await context.GetRepository<Product>().GetAsync(_ => _.Name.Equals(model.Name));
+                Product existData = await context.GetRepository<Product>().GetAsync(_ => _.Name.Equals(productDto.Name));
                 if (existData is not null)
                 {
                     
@@ -76,7 +76,7 @@ namespace WebApi.Controllers
                 await context.BeginTransactionAsync();
 
                 
-                await context.ProductRepo.AddAsync(model);
+                await context.ProductRepo.AddAsync(productDto);
                 await context.CommitAsync();
 
                 return Ok(new ResponseApi(200 , "Added"));
@@ -90,8 +90,8 @@ namespace WebApi.Controllers
             }
         }
 
-        [HttpPut("update/{id}")]
-        public async Task<IActionResult> Update(int id, UpdateProductDto model)
+        [HttpPut("update")]
+        public async Task<IActionResult> Update(List<IFormFile>? photo, UpdateProductDto model)
         {
             if (!ModelState.IsValid)
             {
@@ -100,12 +100,7 @@ namespace WebApi.Controllers
             }
             try
             {
-                var existData = await context.GetRepository<Product>().GetAsync(_=>_.Id != id && _.Name.Equals(model.Name));
-                if (existData is not null)
-                {
-                    
-                    return BadRequest(error: new ResponseApi(400,  "Already Exist"));
-                }
+                
 
                 
                     await context.ProductRepo.UpdateAsync(model);
@@ -132,14 +127,15 @@ namespace WebApi.Controllers
 
             try
             {
-                var deletedData = await context.GetRepository<Product>().GetAsync(_ => _.Id == id);
+                var deletedData = await context.GetRepository<Product>().GetAsync(_ => _.Id == id, m=>m.Category,
+                                                                                        m=>m.Photos);
+
                 if (deletedData == null)
                 {
-                    
                     return BadRequest(error: new ResponseApi(400, "Deleted Data Is Invalid"));
                 }
-                await context.GetRepository<Product>().DeleteAsync(id);
-                await context.SaveChangesAsync();
+                await context.ProductRepo.DeleteAsync(deletedData);
+                
                 return Ok(new ResponseApi(200, "Deleted"));
 
             }

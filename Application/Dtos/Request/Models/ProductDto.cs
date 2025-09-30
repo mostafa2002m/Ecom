@@ -6,9 +6,7 @@ namespace Application.Dtos.Request.Models
     public class ProductDto : CreateProductDto
     {
         public int Id { get; set; }
-
         public virtual List<PhotoDto> Photos { get; set; }
-        
         public virtual CategoryDto Category { get; set; }
         public string CategoryName { get; set; }
 

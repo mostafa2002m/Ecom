@@ -31,6 +31,8 @@ if (app.Environment.IsDevelopment())
     });
     
 }
+
+app.UseStatusCodePagesWithReExecute("/errors/{0}");
 app.UseHttpsRedirection();
 
 
@@ -40,3 +42,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
